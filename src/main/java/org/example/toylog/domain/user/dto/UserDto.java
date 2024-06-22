@@ -1,12 +1,15 @@
 package org.example.toylog.domain.user.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
 public class UserDto {
-
+    private String userId;
+    private String password;
+    private String name;
+    private String email;
 }
