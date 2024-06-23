@@ -1,32 +1,17 @@
 package org.example.toylog.domain.user.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.toylog.domain.comment.entity.Comment;
-import org.example.toylog.domain.follower.entity.Follower;
-import org.example.toylog.domain.following.entity.Following;
-import org.example.toylog.domain.like.entity.Like;
-import org.example.toylog.domain.post.entity.Post;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
@@ -38,8 +23,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
-    private String userId;
+    @Column(name = "login_id", nullable = false, unique = true)
+    private String loginId;
 
     @Column(nullable = false)
     private String password;
@@ -50,28 +35,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "registration_date", nullable = false)
+    @Column(name = "registration_date", updatable = false)
     @CreatedDate
-    private LocalDateTime registrationDate;
+    private LocalDateTime registrationDate = LocalDateTime.now();
 
     @Column(name = "profile_comment")
     private String profileComment;
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Follower> followers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Following> followings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
 }
