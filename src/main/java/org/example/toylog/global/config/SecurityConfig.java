@@ -21,7 +21,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login", "/signup").permitAll()
+                        .requestMatchers("/", "/signup", "/login", "/css/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
@@ -29,8 +29,19 @@ public class SecurityConfig {
 
         http
                 .formLogin((auth) -> auth.loginPage("/login")
+                        .loginPage("/login")
                         .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true) // Redirect to homepage after successful login
+                        .failureUrl("/login?error=true")
+                        .usernameParameter("loginId")
+                        .passwordParameter("password")
                         .permitAll()
+                )
+                .logout(logout ->
+                        logout
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/")
+                                .permitAll()
                 );
 
         http

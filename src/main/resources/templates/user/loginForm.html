@@ -99,10 +99,11 @@
         <h1>Login to Velog.io</h1>
         <p>Enter your credentials to access your account</p>
     </div>
-
     <form class="login-form" th:action="@{/login}" method="post">
-
-        <label for="loginId">UserId</label>
+        <div th:if="${param.error}">
+            <p class="error-message">Invalid login ID or password</p>
+        </div>
+        <label for="loginId">Login ID</label>
         <input type="text" id="loginId" name="loginId" required>
 
         <label for="password">Password</label>
@@ -110,7 +111,6 @@
 
         <button type="submit">Login</button>
     </form>
-
     <div class="login-footer">
         <p>Don't have an account? <a href="/signup" th:href="@{/signup}">Sign up</a></p>
     </div>
