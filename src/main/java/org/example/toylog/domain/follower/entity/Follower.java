@@ -1,4 +1,4 @@
-package org.example.toylog.domain.comment.entity;
+package org.example.toylog.domain.follower.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,27 +12,19 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.toylog.domain.post.entity.Post;
 import org.example.toylog.domain.user.entity.User;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "followers")
 @Getter @Setter
 @NoArgsConstructor
-public class Comment {
+public class Follower {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String content;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
 }
