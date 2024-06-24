@@ -11,5 +11,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+jwt:
+  secret: VlwEyVBsYt9V7zq57YcfPQye08f7MGVA9XkHa321455235
+  expirationMs: 86400000
+
 server:
   port: 80
+
+
