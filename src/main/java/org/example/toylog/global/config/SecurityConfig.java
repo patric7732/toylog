@@ -1,8 +1,5 @@
 package org.example.toylog.global.config;
 
-import org.example.toylog.global.security.jwt.JWTFilter;
-import org.example.toylog.global.security.jwt.JWTUtil;
-import org.example.toylog.global.security.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,23 +16,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final AuthenticationConfiguration authenticationConfiguration;
-    //JWTUtil 주입
-    private final JWTUtil jwtUtil;
-
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
-    }
-
-
-    //AuthenticationManager Bean 등록
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-
-        return configuration.getAuthenticationManager();
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -66,28 +46,8 @@ public class SecurityConfig {
                                 .permitAll()
                 );
 
-        //세션 설정
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        //JWTFilter 등록
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
-        //AuthenticationManager()와 JWTUtil 인수 전달
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-
         http
                 .csrf((auth) -> auth.disable());
-
-        http
-                .formLogin((auth) -> auth.disable());
-
-        http
-                .httpBasic((auth) -> auth.disable());
 
         return http.build();
     }

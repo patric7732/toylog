@@ -43,5 +43,6 @@ public class User {
     private String profileComment;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 }

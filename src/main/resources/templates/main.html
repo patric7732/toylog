@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Main Page - Velog.io</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
@@ -13,43 +13,87 @@
             margin: 0;
             padding: 0;
         }
+
         .header {
             background-color: #009688;
             color: white;
             padding: 1rem;
             width: 100%;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .header a {
+
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header nav a {
             color: white;
             text-decoration: none;
             margin: 0 1rem;
+            transition: color 0.3s ease;
         }
-        .header a:hover {
-            text-decoration: underline;
+
+        .header nav a:hover {
+            color: #f4f4f4;
         }
+
         .content {
             padding: 2rem;
             text-align: center;
+            max-width: 800px;
+            width: 100%;
         }
+
+        .content h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            color: #555;
+            margin: 0.5rem 0;
+        }
+
         .footer {
             background-color: #009688;
             color: white;
             padding: 1rem;
             width: 100%;
             text-align: center;
-            position: absolute;
+            position: fixed;
             bottom: 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+            }
+
+            .header nav a {
+                margin: 0.5rem 0;
+            }
+
+            .footer {
+                padding: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
 <header class="header">
-    <h1>Welcome to Velog.io</h1>
+    <div class="logo">Velog.io</div>
     <nav>
         <a href="/" th:href="@{/}">Home</a>
         <a href="/profile" th:href="@{/profile}">Profile</a>
-        <a href="/logout" th:href="@{/logout}">Logout</a>
+        <a href="/login" th:href="@{/login}" sec:authorize="isAnonymous()">Login</a>
+        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
     </nav>
 </header>
 

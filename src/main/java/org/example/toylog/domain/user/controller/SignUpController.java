@@ -3,6 +3,7 @@ package org.example.toylog.domain.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.toylog.domain.user.dto.UserDto;
+import org.example.toylog.domain.user.entity.Role;
 import org.example.toylog.domain.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ public class SignUpController {
     @GetMapping("/signup")
     public String signUpForm(Model model) {
         model.addAttribute("userDto", new UserDto());
+        model.addAttribute("role", Role.values());
         return "user/signUpForm";
     }
 
