@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Personal Blog - Velog.io</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="header">
+    <div class="logo">Velog.io</div>
+    <nav>
+        <a href="/" th:href="@{/}">Home</a>
+        <a href="/@{user.loginId}" th:href="@{'/@' + ${user.loginId}}">Blog</a>
+        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+    </nav>
+</header>
+
+<div class="content">
+    <h2 th:text="'Welcome to ' + ${user.loginId} + ' Blog'"></h2>
+    <!-- Add user-specific content here -->
+</div>
+
+<footer class="footer">
+    <p>&copy; 2024 Velog.io</p>
+</footer>
+</body>
+</html>
