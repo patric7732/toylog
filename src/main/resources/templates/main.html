@@ -106,9 +106,23 @@
         <a href="/@{loginId}" th:href="@{'/@' + ${user?.loginId}}">Blog</a>
         <a href="/login" th:href="@{/login}" sec:authorize="isAnonymous()">Login</a>
         <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+        <a href="/write" th:href="@{/write}" sec:authorize="isAuthenticated()">WritePost</a>
     </nav>
 </header>
 
+<div class="content">
+    <h2>All Posts</h2>
+    <div th:each="post : ${posts}" class="post">
+        <h3 th:text="${post.title}"></h3>
+        <p th:text="${post.content}"></p>
+        <p th:text="${post.createdAt}"></p>
+        <a th:href="@{'/posts/' + ${post.id}}">View Details</a>
+<!--        <a th:href="@{'/posts/edit/' + ${post.id}}" sec:authorize="isAuthenticated() and #authentication.name == ${post.user.loginId}">Edit</a>-->
+<!--        <form th:action="@{'/posts/delete/' + ${post.id}}" method="post" sec:authorize="isAuthenticated() and #authentication.name == ${post.user.loginId}">-->
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+</div>
 
 <footer class="footer">
     <p>&copy; 2024 Velog.io</p>
