@@ -54,10 +54,22 @@
             margin-bottom: 1rem;
         }
 
-        .content p {
-            font-size: 1.2rem;
+        .content .post {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .content .post h3 {
+            margin: 0;
+            color: #009688;
+        }
+
+        .content .post p {
             color: #555;
-            margin: 0.5rem 0;
         }
 
         .footer {
@@ -91,16 +103,21 @@
     <div class="logo">Velog.io</div>
     <nav>
         <a href="/" th:href="@{/}">Home</a>
-        <a href="/profile" th:href="@{/profile}">Profile</a>
+        <a href="/@{loginId}" th:href="@{'/@' + ${user?.loginId}}">Blog</a>
         <a href="/login" th:href="@{/login}" sec:authorize="isAnonymous()">Login</a>
         <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+        <a href="/write" th:href="@{/write}" sec:authorize="isAuthenticated()">WritePost</a>
     </nav>
 </header>
 
 <div class="content">
-    <h2>User Information</h2>
-    <p><strong>Username:</strong> <span th:text="${id}"></span></p>
-    <p><strong>Role:</strong> <span th:text="${role}"></span></p>
+    <h2>All Posts</h2>
+    <div th:each="post : ${posts}" class="post">
+        <h3 th:text="${post.title}"></h3>
+        <p th:text="${post.content}"></p>
+        <p th:text="${post.createdAt}"></p>
+        <a th:href="@{'/posts/' + ${post.id}}">View Details</a>
+    </div>
 </div>
 
 <footer class="footer">

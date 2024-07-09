@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Post Details - Velog.io</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="header">
+    <div class="logo">Velog.io</div>
+    <nav>
+        <a href="/" th:href="@{/}">Home</a>
+<!--        <a href="/@{loginId}" th:href="@{'/@' + ${user.loginId}}">Blog</a>-->
+<!--        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>-->
+    </nav>
+</header>
+
+<div class="content">
+    <h2 th:text="${post.title}">Post Title</h2>
+    <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
+    <p th:text="${post.createdAt}">Created at: </p>
+
+        <a th:href="@{'/posts/edit/' + ${post.id}}">Edit</a>
+        <form th:action="@{'/posts/delete/' + ${post.id}}" method="post">
+            <button type="submit">Delete</button>
+        </form>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2024 Velog.io</p>
+</footer>
+</body>
+</html>
