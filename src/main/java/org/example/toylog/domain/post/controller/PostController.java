@@ -8,6 +8,7 @@ import org.example.toylog.domain.post.entity.Post;
 import org.example.toylog.domain.post.service.PostService;
 import org.example.toylog.domain.user.entity.User;
 import org.example.toylog.domain.user.service.UserService;
+import org.example.toylog.global.util.CommonUtil;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -62,6 +63,8 @@ public class PostController {
             User user = userOpt.get();
             post.setUser(user);
             post.setCreatedAt(LocalDateTime.now());
+//            String contentHtml = CommonUtil.markdown(post.getContent());
+//            post.setContent(contentHtml);
             postService.createPost(post);
             return "redirect:/@" + user.getLoginId();
         }
@@ -74,9 +77,6 @@ public class PostController {
         if (postOpt.isPresent()) {
             Post post = postOpt.get();
             model.addAttribute("post", post);
-//            if (userDetails != null) {
-//                model.addAttribute("loggedInUser", userDetails.getUsername());
-//            }
             return "post/detailPost";
         }
         return "redirect:/";
