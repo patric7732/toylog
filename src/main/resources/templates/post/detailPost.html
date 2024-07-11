@@ -9,8 +9,6 @@
     <div class="logo">Velog.io</div>
     <nav>
         <a href="/" th:href="@{/}">Home</a>
-<!--        <a href="/@{loginId}" th:href="@{'/@' + ${user.loginId}}">Blog</a>-->
-<!--        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>-->
     </nav>
 </header>
 
@@ -19,10 +17,33 @@
     <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
     <p th:text="${post.createdAt}">Created at: </p>
 
-        <a th:href="@{'/posts/edit/' + ${post.id}}">Edit</a>
-        <form th:action="@{'/posts/delete/' + ${post.id}}" method="post">
-            <button type="submit">Delete</button>
+    <a th:href="@{'/posts/edit/' + ${post.id}}">Edit</a>
+    <form th:action="@{'/posts/delete/' + ${post.id}}" method="post">
+        <button type="submit">Delete</button>
+    </form>
+
+    <!-- Comment Section -->
+    <div class="comments-section">
+        <h3>Comments</h3>
+
+        <form th:action="@{'/comments/add/' + ${post.id}}" method="post">
+            <textarea name="content" placeholder="Add a comment..." required></textarea>
+            <button type="submit">Submit</button>
         </form>
+
+        <div class="comments-list">
+            <div th:each="comment : ${comments}">
+                <p th:text="${comment.content}">Comment content...</p>
+                <small th:text="${comment.createdAt}">Created at</small>
+                <form th:action="@{'/comments/edit/' + ${comment.id}}" method="post">
+                    <textarea name="content" th:text="${comment.content}" required></textarea>
+                    <button type="submit">Edit</button>
+                </form>
+                <form th:action="@{'/comments/delete/' + ${comment.id}}" method="post">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
 </div>
 
 <footer class="footer">
