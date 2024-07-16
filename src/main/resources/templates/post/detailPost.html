@@ -3,6 +3,162 @@
 <head>
     <title>Post Details - Velog.io</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .header nav a:hover {
+            color: #adb5bd;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .content h2 {
+            font-size: 2.5rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+
+        .content .post-details {
+            margin-bottom: 2rem;
+        }
+
+        .content .post-details div {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #495057;
+        }
+
+        .content .post-details p {
+            color: #868e96;
+            margin-top: 1rem;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .like-section button {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .like-section button:hover {
+            background-color: #01976e;
+        }
+
+        .like-section p {
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            color: #495057;
+        }
+
+        .comments-section h3 {
+            margin-top: 2rem;
+            color: #343a40;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .comments-section form {
+            margin-bottom: 2rem;
+        }
+
+        .comments-section textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .comments-section button {
+            background-color: #343a40;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .comments-section button:hover {
+            background-color: #23272b;
+        }
+
+        .comments-list .comment {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .comments-list .comment p {
+            margin: 0;
+            color: #495057;
+        }
+
+        .comments-list .comment small {
+            display: block;
+            margin-top: 0.5rem;
+            color: #868e96;
+        }
+
+        .comments-list .comment form {
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 <header class="header">
@@ -14,8 +170,21 @@
 
 <div class="content">
     <h2 th:text="${post.title}">Post Title</h2>
-    <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
-    <p th:text="${post.createdAt}">Created at: </p>
+    <div class="post-details">
+        <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
+        <p th:text="${post.createdAt}">Created at: </p>
+    </div>
+
+    <div class="like-section">
+        <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/like'}" method="post" th:if="${!hasLiked}">
+            <button type="submit">Like</button>
+        </form>
+        <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/unlike'}" method="post" th:if="${hasLiked}">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit">Unlike</button>
+        </form>
+        <p th:text="'Likes: ' + ${likeCount}">Likes: 0</p>
+    </div>
 
     <a th:href="@{'/posts/edit/' + ${post.id}}">Edit</a>
     <form th:action="@{'/posts/delete/' + ${post.id}}" method="post">
@@ -26,24 +195,25 @@
     <div class="comments-section">
         <h3>Comments</h3>
 
-        <form th:action="@{'/comments/add/' + ${post.id}}" method="post">
+        <form th:action="@{'/posts/' + ${post.id} + '/comments'}" method="post">
             <textarea name="content" placeholder="Add a comment..." required></textarea>
             <button type="submit">Submit</button>
         </form>
 
         <div class="comments-list">
-            <div th:each="comment : ${comments}">
+            <div th:each="comment : ${comments}" class="comment">
                 <p th:text="${comment.content}">Comment content...</p>
                 <small th:text="${comment.createdAt}">Created at</small>
-                <form th:action="@{'/comments/edit/' + ${comment.id}}" method="post">
+                <form th:action="@{'/posts/' + ${post.id} + '/comments/edit/' + ${comment.id}}" method="post">
                     <textarea name="content" th:text="${comment.content}" required></textarea>
                     <button type="submit">Edit</button>
                 </form>
-                <form th:action="@{'/comments/delete/' + ${comment.id}}" method="post">
+                <form th:action="@{'/posts/' + ${post.id} + '/comments/delete/' + ${comment.id}}" method="post">
                     <button type="submit">Delete</button>
                 </form>
             </div>
         </div>
+    </div>
 </div>
 
 <footer class="footer">

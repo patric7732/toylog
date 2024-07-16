@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.example.toylog.domain.like.service.LikeService;
 import org.example.toylog.domain.post.entity.Post;
 import org.example.toylog.domain.post.service.PostService;
 import org.example.toylog.domain.user.entity.User;
 import org.example.toylog.domain.user.service.UserService;
+import org.example.toylog.global.security.CustomUserDetails;
 import org.example.toylog.global.util.CommonUtil;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class PostController {
     private final PostService postService;
     private final UserService userService;
+    private final LikeService likeService;
 
     @GetMapping("/")
     public String getAllPosts(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -71,14 +74,19 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/@{loginId}/{content}")
-    public String getPostDetails(@PathVariable String loginId, @PathVariable String content, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    @GetMapping("/@{loginId}/{title}")
+    public String getPostDetails(@PathVariable String loginId, @PathVariable String title, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<User> userOpt = userService.findByLoginId(loginId);
         if (userOpt.isPresent()) {
-            Optional<Post> postOpt = postService.findPostByUserAndTitle(loginId, content); // Adjust this method to match your service
+            Optional<Post> postOpt = postService.findPostByUserAndTitle(loginId, title);
             if (postOpt.isPresent()) {
                 Post post = postOpt.get();
                 model.addAttribute("post", post);
+                User currentUser = ((CustomUserDetails) userDetails).getUser();
+                boolean hasLiked = likeService.hasLiked(post, currentUser);
+                long likeCount = likeService.countLikes(post);
+                model.addAttribute("hasLiked", hasLiked);
+                model.addAttribute("likeCount", likeCount);
                 return "post/detailPost";
             }
         }
