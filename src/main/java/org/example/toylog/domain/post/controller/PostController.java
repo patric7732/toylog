@@ -71,16 +71,20 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/posts/{id}")
-    public String getPostDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        Optional<Post> postOpt = postService.findById(id);
-        if (postOpt.isPresent()) {
-            Post post = postOpt.get();
-            model.addAttribute("post", post);
-            return "post/detailPost";
+    @GetMapping("/@{loginId}/{content}")
+    public String getPostDetails(@PathVariable String loginId, @PathVariable String content, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<User> userOpt = userService.findByLoginId(loginId);
+        if (userOpt.isPresent()) {
+            Optional<Post> postOpt = postService.findPostByUserAndTitle(loginId, content); // Adjust this method to match your service
+            if (postOpt.isPresent()) {
+                Post post = postOpt.get();
+                model.addAttribute("post", post);
+                return "post/detailPost";
+            }
         }
         return "redirect:/";
     }
+
 
     @PostMapping("/posts/delete/{id}")
     public String deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {

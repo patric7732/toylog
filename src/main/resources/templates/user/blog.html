@@ -20,8 +20,8 @@
         <h3 th:text="${post.title}"></h3>
         <p th:text="${post.content}"></p>
         <p th:text="${post.createdAt}"></p>
-        <a th:href="@{'/posts/' + ${post.id}}">View Details</a>
-<!--        <a th:href="@{'/posts/edit/' + ${post.id}}" sec:authorize="isAuthenticated() and #authentication.name == ${post.user.loginId}">Edit</a>-->
+        <a th:href="@{'/@' + ${post.user.loginId} + '/' + ${post.title}}">View Details</a>
+        <!--        <a th:href="@{'/posts/edit/' + ${post.id}}" sec:authorize="isAuthenticated() and #authentication.name == ${post.user.loginId}">Edit</a>-->
 <!--        <form th:action="@{'/posts/delete/' + ${post.id}}" method="post" sec:authorize="isAuthenticated() and #authentication.name == ${post.user.loginId}">-->
             <button type="submit">Delete</button>
         </form>

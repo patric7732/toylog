@@ -34,4 +34,8 @@ public class PostService {
     public void delete(Post post) {
         postRepository.delete(post);
     }
+
+    public Optional<Post> findPostByUserAndTitle(String loginId, String title) {
+        return postRepository.findByUserLoginIdAndTitle(loginId, title);
+    }
 }
