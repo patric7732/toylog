@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.example.toylog.domain.follow.service.FollowService;
 import org.example.toylog.domain.like.service.LikeService;
 import org.example.toylog.domain.post.entity.Post;
 import org.example.toylog.domain.post.service.PostService;
 import org.example.toylog.domain.user.entity.User;
 import org.example.toylog.domain.user.service.UserService;
 import org.example.toylog.global.security.CustomUserDetails;
-import org.example.toylog.global.util.CommonUtil;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -26,6 +26,7 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final LikeService likeService;
+    private final FollowService followService;
 
     @GetMapping("/")
     public String getAllPosts(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -39,13 +40,23 @@ public class PostController {
     }
 
     @GetMapping("/@{loginId}")
-    public String getUserPosts(@PathVariable String loginId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String getUserBlog(@PathVariable String loginId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<User> userOpt = userService.findByLoginId(loginId);
+        User currentUser = ((CustomUserDetails) userDetails).getUser();
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<Post> posts = postService.findByUser(user);
+            boolean isFollowing = followService.isFollowing(user, currentUser);
+            long followersCount = followService.getFollowers(user).size();
+            long followingCount = followService.getFollowing(user).size();
+
+
             model.addAttribute("user", user);
             model.addAttribute("posts", posts);
+            model.addAttribute("isFollowing", isFollowing);
+            model.addAttribute("followersCount", followersCount);
+            model.addAttribute("followingCount", followingCount);
+
         }
         if (userDetails != null) {
             model.addAttribute("loggedInUser", userDetails.getUsername());
@@ -89,6 +100,7 @@ public class PostController {
                 model.addAttribute("likeCount", likeCount);
                 return "post/detailPost";
             }
+
         }
         return "redirect:/";
     }

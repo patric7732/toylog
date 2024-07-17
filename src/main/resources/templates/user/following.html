@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Following - Velog.io</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="header">
+    <div class="logo">Velog.io</div>
+    <nav>
+        <a href="/" th:href="@{/}">Home</a>
+        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+    </nav>
+</header>
+
+<div class="content">
+    <h2>Following</h2>
+    <div th:each="followee : ${following}">
+        <p th:text="${followee.following.loginId}"></p>
+    </div>
+</div>
