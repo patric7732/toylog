@@ -1,5 +1,6 @@
 package org.example.toylog.domain.follow.controller;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.example.toylog.domain.follow.entity.Follow;
 import org.example.toylog.domain.follow.service.FollowService;
@@ -22,22 +23,20 @@ public class FollowController {
     private final FollowService followService;
     private final UserService userService;
 
-//    @GetMapping
-//    public String viewBlog(@PathVariable String loginId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
-//        User blogOwner = userService.findByLoginId(loginId).orElseThrow(() -> new RuntimeException("User not found"));
-//        User currentUser = ((CustomUserDetails) userDetails).getUser();
-//
-//        boolean isFollowing = followService.isFollowing(currentUser, blogOwner);
-//        long followersCount = followService.getFollowers(blogOwner).size();
-//        long followingCount = followService.getFollowing(blogOwner).size();
-//
-//        model.addAttribute("user", blogOwner);
-//        model.addAttribute("isFollowing", isFollowing);
-//        model.addAttribute("followersCount", followersCount);
-//        model.addAttribute("followingCount", followingCount);
-//
-//        return "user/blog";
-//    }
+    @PostMapping("/toggleFollow")
+    public String toggleFollow(@PathVariable String loginId, @AuthenticationPrincipal UserDetails userDetails) {
+        User currentUser = ((CustomUserDetails) userDetails).getUser();
+        Optional<User> userOpt = userService.findByLoginId(loginId);
+        if (userOpt.isPresent() && !userOpt.get().equals(currentUser)) {
+            User user = userOpt.get();
+            if (followService.isFollowing(user, currentUser)) {
+                followService.unfollowUser(user, currentUser);
+            } else {
+                followService.toggleFollow(user, currentUser);
+            }
+        }
+        return "redirect:/@" + loginId;
+    }
 
     @PostMapping("/follow")
     public String followUser(@PathVariable String loginId, @AuthenticationPrincipal UserDetails userDetails) {

@@ -17,12 +17,9 @@
 <div class="content">
     <h2 th:text="'Welcome to ' + ${user.loginId} + ' Blog'"></h2>
 
-    <div class="follow-section">
-        <form th:action="@{'/@' + ${user.loginId} + '/follow'}" method="post" th:if="${!isFollowing}">
-            <button type="submit">Follow</button>
-        </form>
-        <form th:action="@{'/@' + ${user.loginId} + '/unfollow'}" method="post" th:if="${isFollowing}">
-            <button type="submit">Unfollow</button>
+    <div class="follow-section" th:if="${!isSelf}">
+        <form th:action="@{'/@' + ${user.loginId} + '/toggleFollow'}" method="post">
+            <button type="submit" th:text="${isFollowing} ? 'Unfollow' : 'Follow'"></button>
         </form>
     </div>
 

@@ -56,6 +56,7 @@ public class PostController {
             model.addAttribute("isFollowing", isFollowing);
             model.addAttribute("followersCount", followersCount);
             model.addAttribute("followingCount", followingCount);
+            model.addAttribute("isSelf", user.equals(currentUser));
 
         }
         if (userDetails != null) {

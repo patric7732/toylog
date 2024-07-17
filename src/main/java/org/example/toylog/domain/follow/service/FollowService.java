@@ -47,7 +47,7 @@ public class FollowService {
         return followRepository.findByFollower(user);
     }
 
-    public boolean isFollowing(User follower, User following) {
-        return followRepository.existsByFollowerAndFollowing(follower, following);
+    public boolean isFollowing(User user, User currentUser) {
+        return followRepository.existsByFollowerAndFollowing(user, currentUser);
     }
 }
