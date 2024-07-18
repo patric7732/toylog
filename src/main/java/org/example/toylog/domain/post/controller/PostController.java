@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.example.toylog.domain.comment.entity.Comment;
+import org.example.toylog.domain.comment.service.CommentService;
 import org.example.toylog.domain.follow.service.FollowService;
 import org.example.toylog.domain.like.service.LikeService;
 import org.example.toylog.domain.post.entity.Post;
@@ -26,6 +28,7 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final LikeService likeService;
+    private final CommentService commentService;
     private final FollowService followService;
 
     @GetMapping("/")
@@ -97,6 +100,9 @@ public class PostController {
                 User currentUser = ((CustomUserDetails) userDetails).getUser();
                 boolean hasLiked = likeService.hasLiked(post, currentUser);
                 long likeCount = likeService.countLikes(post);
+                List<Comment> comments  = commentService.findCommentByPostId(post.getId());
+                model.addAttribute("comments", comments);
+                model.addAttribute("currentUser", currentUser);
                 model.addAttribute("hasLiked", hasLiked);
                 model.addAttribute("likeCount", likeCount);
                 return "post/detailPost";
