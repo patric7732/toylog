@@ -30,9 +30,12 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Comment editComment(Long commentId, String content, User user) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Invalid comment Id: " + commentId));
-        if (comment.getUser().equals(user)) {
+    public Comment editComment(Long commentId, String content, String loginId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid comment Id: " + commentId));
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + loginId));
+        if (comment.getUser().getId().equals(user.getId())) {
             comment.setContent(content);
             return commentRepository.save(comment);
         } else {
@@ -40,9 +43,12 @@ public class CommentService {
         }
     }
 
-    public void deleteComment(Long commentId, User user) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("Invalid comment Id: " + commentId));
-        if (comment.getUser().equals(user)) {
+    public void deleteComment(Long commentId, String loginId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid comment Id: " + commentId));
+        User user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + loginId));
+        if (comment.getUser().getId().equals(user.getId())) {
             commentRepository.delete(comment);
         } else {
             throw new IllegalStateException("You can only delete your own comments");

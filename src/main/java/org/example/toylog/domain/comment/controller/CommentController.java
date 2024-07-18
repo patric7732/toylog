@@ -24,15 +24,21 @@ public class CommentController {
 
     @PostMapping("/editComment/{commentId}")
     public String editComment(@PathVariable String loginId, @PathVariable String title, @PathVariable Long commentId, @RequestParam String content, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = (User) userDetails;
-        commentService.editComment(commentId, content, user);
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        String username = userDetails.getUsername();
+        commentService.editComment(commentId, content, username);
         return "redirect:/" + loginId + "/" + title;
     }
 
     @PostMapping("/deleteComment/{commentId}")
     public String deleteComment(@PathVariable String loginId, @PathVariable String title, @PathVariable Long commentId, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = (User) userDetails;
-        commentService.deleteComment(commentId, user);
+        if (userDetails == null) {
+            return "redirect:/login";
+        }
+        String username = userDetails.getUsername();
+        commentService.deleteComment(commentId, username);
         return "redirect:/" + loginId + "/" + title;
     }
 }
