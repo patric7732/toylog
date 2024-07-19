@@ -6,23 +6,21 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: #181818;
+            color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
 
         .header {
-            background-color: #009688;
+            background-color: #181818;
             color: white;
             padding: 1rem;
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #333;
         }
 
         .header .logo {
@@ -38,62 +36,79 @@
         }
 
         .header nav a:hover {
-            color: #f4f4f4;
+            color: #009688;
         }
 
         .content {
             padding: 2rem;
-            text-align: center;
-            max-width: 800px;
             width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .content h2 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 1rem;
+        .post-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        .content .post {
-            background: white;
-            border: 1px solid #ddd;
+        .post-card {
+            background: #282828;
+            border: 1px solid #333;
+            border-radius: 10px;
             padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            text-align: left;
+            width: calc(33.333% - 1rem);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        .content .post h3 {
-            margin: 0;
+        .post-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .post-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-card h3 {
             color: #009688;
+            margin: 0.5rem 0;
         }
 
-        .content .post p {
-            color: #555;
+        .post-card p {
+            color: #ccc;
+        }
+
+        .post-card .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #888;
         }
 
         .footer {
-            background-color: #009688;
+            background-color: #181818;
             color: white;
             padding: 1rem;
             width: 100%;
             text-align: center;
+            border-top: 1px solid #333;
             position: fixed;
             bottom: 0;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
+            .post-card {
+                width: calc(50% - 1rem);
             }
+        }
 
-            .header nav a {
-                margin: 0.5rem 0;
-            }
-
-            .footer {
-                padding: 0.5rem;
+        @media (max-width: 480px) {
+            .post-card {
+                width: 100%;
             }
         }
     </style>
@@ -112,16 +127,21 @@
 
 <div class="content">
     <h2>All Posts</h2>
-    <div th:each="post : ${posts}" class="post">
-        <h3 th:text="${post.title}"></h3>
-        <p th:text="${post.content}"></p>
-        <p th:text="${post.createdAt}"></p>
-        <a th:href="@{'/posts/' + ${post.id}}">View Details</a>
+    <div class="post-grid">
+        <div th:each="post : ${posts}" class="post-card">
+            <img th:src="@{/images/velog_logo.png}" alt="Post Image"> <!-- Placeholder image -->
+            <h3 th:text="${post.title}"></h3>
+            <p th:text="${post.content}"></p>
+            <div class="post-meta">
+                <span th:text="${post.createdAt}"></span>
+                <a th:href="@{'/@' + ${post.user.loginId} + '/' + ${post.title}}">View Details</a>
+            </div>
+        </div>
     </div>
 </div>
 
 <footer class="footer">
-    <p>&copy; 2024 Velog.io</p>
+    <p>&copy; 2024 Toylog.io</p>
 </footer>
 </body>
 </html>

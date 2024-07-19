@@ -3,30 +3,309 @@
 <head>
     <title>Post Details - Velog.io</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #181818;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .header nav a:hover {
+            color: #009688;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h2 {
+            font-size: 2.5rem;
+            color: #f4f4f4;
+            margin-bottom: 1rem;
+        }
+
+        .content .post-details {
+            margin-bottom: 2rem;
+        }
+
+        .content .post-details div {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .content .post-details p {
+            margin-top: 1rem;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .like-section button {
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .like-section button:hover {
+            background-color: #007d6a;
+        }
+
+        .like-section p {
+            margin: 0 1rem;
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+
+        .comments-section h3 {
+            margin-top: 2rem;
+            color: #f4f4f4;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .comments-section form {
+            margin-bottom: 2rem;
+        }
+
+        .comments-section textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: #282828;
+            color: #f4f4f4;
+            margin-bottom: 0.5rem;
+        }
+
+        .comments-section button {
+            background-color: #009688;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .comments-section button:hover {
+            background-color: #007d6a;
+        }
+
+        .comments-list .comment {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #282828;
+            color: #ccc;
+        }
+
+        .comments-list .comment p {
+            margin: 0;
+        }
+
+        .comments-list .comment small {
+            display: block;
+            margin-top: 0.5rem;
+            color: #868e96;
+        }
+
+        .comments-list .comment form {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .comments-list .comment.editing form {
+            display: block;
+        }
+
+        .comments-list .comment.editing p {
+            display: none;
+        }
+
+
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-actions button {
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-author a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .post-author a:hover {
+            color: gray;
+        }
+
+        .post-metadata {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-metadata .post-author {
+            flex: 1;
+        }
+
+        .post-metadata .post-actions {
+            flex: 0;
+        }
+
+        .post-actions button {
+            background-color: transparent;
+            color: #ccc;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .post-actions button:hover {
+            color: #f4f4f4;
+        }
+
+    </style>
 </head>
 <body>
 <header class="header">
     <div class="logo">Velog.io</div>
     <nav>
         <a href="/" th:href="@{/}">Home</a>
-<!--        <a href="/@{loginId}" th:href="@{'/@' + ${user.loginId}}">Blog</a>-->
-<!--        <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>-->
     </nav>
 </header>
 
 <div class="content">
     <h2 th:text="${post.title}">Post Title</h2>
-    <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
-    <p th:text="${post.createdAt}">Created at: </p>
+    <div class="post-metadata">
+        <div class="post-author">
+            <a th:href="@{'/@' + ${post.user.loginId}}" th:text="${post.user.name}">Author Name</a>
+            <p th:text="${post.createdAt}">Created at</p>
+        </div>
+        <div class="post-actions" th:if="${currentUser != null and currentUser.id == post.user.id}">
+            <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/edit/' + ${post.id}}" method="get">
+                <button type="submit">수정</button>
+            </form>
+            <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/delete/' + ${post.id}}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit">삭제</button>
+            </form>
+        </div>
+    </div>
+    <div class="post-details">
+        <div th:utext="${@commonUtil.markdown(post.content)}">Post content goes here...</div>
+    </div>
 
-        <a th:href="@{'/posts/edit/' + ${post.id}}">Edit</a>
-        <form th:action="@{'/posts/delete/' + ${post.id}}" method="post">
-            <button type="submit">Delete</button>
+    <div class="like-section">
+        <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/like'}" method="post" th:if="${!hasLiked}">
+            <button type="submit">Like</button>
         </form>
+        <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/unlike'}" method="post" th:if="${hasLiked}">
+            <input type="hidden" name="_method" value="delete"/>
+            <button type="submit">Unlike</button>
+        </form>
+        <p th:text="'Likes: ' + ${likeCount}">Likes: 0</p>
+    </div>
+
+    <div class="comments-section">
+        <h3>Comments</h3>
+
+        <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/addComment'}" method="post">
+            <textarea name="content" placeholder="Add a comment..." required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="comments-list">
+            <div th:each="comment : ${comments}" class="comment">
+                <p th:text="${comment.content}">Comment content...</p>
+                <small th:text="${comment.createdAt}">Created at</small>
+                <div th:if="${currentUser != null and comment.user.id == currentUser.id}">
+                    <button type="button" onclick="editComment(this)">Edit</button>
+                    <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/editComment/' + ${comment.id}}" method="post" class="edit-form">
+                        <textarea name="content" th:text="${comment.content}" required></textarea>
+                        <button type="submit">Save</button>
+                    </form>
+                    <form th:action="@{'/@' + ${post.user.loginId} + '/' + ${post.title} + '/deleteComment/' + ${comment.id}}" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<footer class="footer">
-    <p>&copy; 2024 Velog.io</p>
-</footer>
+<script>
+    function editComment(button) {
+        var commentDiv = button.closest('.comment');
+        var editForm = commentDiv.querySelector('.edit-form');
+        var commentText = commentDiv.querySelector('p');
+
+        if (editForm.style.display === 'none' || editForm.style.display === '') {
+            editForm.style.display = 'block';
+            commentText.style.display = 'none';
+        } else {
+            editForm.style.display = 'none';
+            commentText.style.display = 'block';
+        }
+    }
+</script>
+
 </body>
 </html>

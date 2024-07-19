@@ -4,11 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.example.toylog.domain.comment.entity.Comment;
+import org.example.toylog.domain.comment.service.CommentService;
+import org.example.toylog.domain.follow.service.FollowService;
+import org.example.toylog.domain.like.service.LikeService;
 import org.example.toylog.domain.post.entity.Post;
 import org.example.toylog.domain.post.service.PostService;
 import org.example.toylog.domain.user.entity.User;
 import org.example.toylog.domain.user.service.UserService;
-import org.example.toylog.global.util.CommonUtil;
+import org.example.toylog.global.security.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class PostController {
     private final PostService postService;
     private final UserService userService;
+    private final LikeService likeService;
+    private final CommentService commentService;
+    private final FollowService followService;
 
     @GetMapping("/")
     public String getAllPosts(Model model, @AuthenticationPrincipal UserDetails userDetails) {
@@ -36,13 +43,24 @@ public class PostController {
     }
 
     @GetMapping("/@{loginId}")
-    public String getUserPosts(@PathVariable String loginId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String getUserBlog(@PathVariable String loginId, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<User> userOpt = userService.findByLoginId(loginId);
+        User currentUser = ((CustomUserDetails) userDetails).getUser();
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<Post> posts = postService.findByUser(user);
+            boolean isFollowing = followService.isFollowing(user, currentUser);
+            long followersCount = followService.getFollowers(user).size();
+            long followingCount = followService.getFollowing(user).size();
+
+
             model.addAttribute("user", user);
             model.addAttribute("posts", posts);
+            model.addAttribute("isFollowing", isFollowing);
+            model.addAttribute("followersCount", followersCount);
+            model.addAttribute("followingCount", followingCount);
+            model.addAttribute("isSelf", user.equals(currentUser));
+
         }
         if (userDetails != null) {
             model.addAttribute("loggedInUser", userDetails.getUsername());
@@ -71,18 +89,31 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/posts/{id}")
-    public String getPostDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        Optional<Post> postOpt = postService.findById(id);
-        if (postOpt.isPresent()) {
-            Post post = postOpt.get();
-            model.addAttribute("post", post);
-            return "post/detailPost";
+    @GetMapping("/@{loginId}/{title}")
+    public String getPostDetails(@PathVariable String loginId, @PathVariable String title, Model model, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<User> userOpt = userService.findByLoginId(loginId);
+        if (userOpt.isPresent()) {
+            Optional<Post> postOpt = postService.findPostByUserAndTitle(loginId, title);
+            if (postOpt.isPresent()) {
+                Post post = postOpt.get();
+                model.addAttribute("post", post);
+                User currentUser = ((CustomUserDetails) userDetails).getUser();
+                boolean hasLiked = likeService.hasLiked(post, currentUser);
+                long likeCount = likeService.countLikes(post);
+                List<Comment> comments  = commentService.findCommentByPostId(post.getId());
+                model.addAttribute("comments", comments);
+                model.addAttribute("currentUser", currentUser);
+                model.addAttribute("hasLiked", hasLiked);
+                model.addAttribute("likeCount", likeCount);
+                return "post/detailPost";
+            }
+
         }
         return "redirect:/";
     }
 
-    @PostMapping("/posts/delete/{id}")
+
+    @PostMapping("/@{loginId}/{title}/delete/{id}")
     public String deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {
@@ -95,7 +126,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/posts/edit/{id}")
+    @GetMapping("/@{loginId}/{title}/edit/{id}")
     public String editPostForm(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {
@@ -108,7 +139,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/edit/{id}")
+    @PostMapping("/@{loginId}/{title}/edit/{id}")
     public String editPost(@PathVariable Long id, @ModelAttribute Post post, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {
