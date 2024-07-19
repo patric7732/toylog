@@ -113,7 +113,7 @@ public class PostController {
     }
 
 
-    @PostMapping("/posts/delete/{id}")
+    @PostMapping("/@{loginId}/{title}/delete/{id}")
     public String deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {
@@ -126,7 +126,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/posts/edit/{id}")
+    @GetMapping("/@{loginId}/{title}/edit/{id}")
     public String editPostForm(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {
@@ -139,7 +139,7 @@ public class PostController {
         return "redirect:/";
     }
 
-    @PostMapping("/posts/edit/{id}")
+    @PostMapping("/@{loginId}/{title}/edit/{id}")
     public String editPost(@PathVariable Long id, @ModelAttribute Post post, @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Post> postOpt = postService.findById(id);
         if (postOpt.isPresent()) {

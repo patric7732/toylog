@@ -3,38 +3,236 @@
 <head>
     <title>Personal Blog - Velog.io</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #181818;
+            color: white;
+            padding: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .header nav a:hover {
+            color: #009688;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background-color: #181818;
+            border-bottom: 1px solid #333;
+        }
+
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .profile-header p {
+            margin: 0.5rem 0;
+            color: #999;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .profile-header p a {
+            color: #f4f4f4;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .profile-header p a:hover {
+            color: #009688;
+        }
+
+        .follow-section {
+            margin-top: 1rem;
+        }
+
+        .follow-section form {
+            display: inline-block;
+        }
+
+        .follow-section button {
+            background-color: #009688;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .follow-section button:hover {
+            background-color: #007d6a;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .tabs a {
+            color: #999;
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        .tabs a.active, .tabs a:hover {
+            color: #009688;
+            border-bottom: 2px solid #009688;
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.5rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #282828;
+            color: #f4f4f4;
+        }
+
+        .post-card {
+            background: #282828;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .post-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .post-card h3 {
+            color: #009688;
+            margin: 0.5rem 0;
+        }
+
+        .post-card p {
+            color: #ccc;
+        }
+
+        .post-card .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .footer {
+            background-color: #181818;
+            color: white;
+            padding: 1rem;
+            width: 100%;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+    </style>
 </head>
 <body>
 <header class="header">
     <div class="logo">Velog.io</div>
     <nav>
         <a href="/" th:href="@{/}">Home</a>
-        <a href="/@{user.loginId}" th:href="@{'/@' + ${user.loginId}}">Blog</a>
+        <a href="/@{loginId}" th:href="@{'/@' + ${user?.loginId}}">Blog</a>
+        <a href="/login" th:href="@{/login}" sec:authorize="isAnonymous()">Login</a>
         <a href="/logout" th:href="@{/logout}" sec:authorize="isAuthenticated()">Logout</a>
+        <a href="/write" th:href="@{/write}" sec:authorize="isAuthenticated()">Write Post</a>
     </nav>
 </header>
 
-<div class="content">
-    <h2 th:text="'Welcome to ' + ${user.loginId} + ' Blog'"></h2>
-
+<div class="profile-header">
+    <img th:src="@{/images/userIcon.png}" alt="Profile Image">
+    <h2 th:text="${user.name}">User Name</h2>
+    <p>
+        <a th:href="@{'/@' + ${user.loginId} + '/followers'}" th:text="'팔로워 ' + ${followersCount} + ' '">Followers: 0</a>
+        <a th:href="@{'/@' + ${user.loginId} + '/following'}" th:text="'팔로잉 ' + ${followingCount} + ' '">Following: 0</a>
+    </p>
     <div class="follow-section" th:if="${!isSelf}">
         <form th:action="@{'/@' + ${user.loginId} + '/toggleFollow'}" method="post">
             <button type="submit" th:text="${isFollowing} ? 'Unfollow' : 'Follow'"></button>
         </form>
     </div>
+</div>
 
-    <div>
-        <p>Followers: <span th:text="${followersCount}"></span></p>
-        <p>Following: <span th:text="${followingCount}"></span></p>
-        <a th:href="@{'/@' + ${user.loginId} + '/followers'}">View Followers</a>
-        <a th:href="@{'/@' + ${user.loginId} + '/following'}">View Following</a>
-    </div>
+<div class="tabs">
+    <a href="#" class="active">글</a>
+    <a href="#">시리즈</a>
+    <a href="#">소개</a>
+</div>
 
-    <div th:each="post : ${posts}" class="post">
+<div class="search-bar">
+    <input type="text" placeholder="검색어를 입력하세요">
+</div>
+
+<div class="content">
+    <div th:each="post : ${posts}" class="post-card">
+        <img th:src="@{/images/velog_logo.png}" alt="Post Image">
         <h3 th:text="${post.title}"></h3>
         <p th:text="${post.content}"></p>
-        <p th:text="${post.createdAt}"></p>
-        <a th:href="@{'/@' + ${post.user.loginId} + '/' + ${post.title}}">View Details</a>
+        <div class="post-meta">
+            <span th:text="${post.createdAt}">Created at</span>
+            <a th:href="@{'/@' + ${post.user.loginId} + '/' + ${post.title}}">View Details</a>
+        </div>
     </div>
 </div>
 

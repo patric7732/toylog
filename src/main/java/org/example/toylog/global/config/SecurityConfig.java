@@ -23,7 +23,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/signup", "/login", "/css/**", "/@{loginId}/**").permitAll()
+                        .requestMatchers("/", "/signup", "/login", "/css/**", "/@{loginId}/**", "/images/**").permitAll()
                         .requestMatchers("/api/login/**", "/api/signup/**").permitAll() // API
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
@@ -58,8 +58,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-        return new HiddenHttpMethodFilter();
-    }
+//    @Bean
+//    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
+//        return new HiddenHttpMethodFilter();
+//    }
 }

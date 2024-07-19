@@ -59,6 +59,7 @@ public class FollowController {
         User user = userService.findByLoginId(loginId).orElseThrow(() -> new RuntimeException("User not found"));
         List<Follow> followers = followService.getFollowers(user);
         model.addAttribute("followers", followers);
+        model.addAttribute("user", user);
         return "user/follower";
     }
 

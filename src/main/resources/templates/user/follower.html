@@ -3,6 +3,129 @@
 <head>
     <title>Followers - Velog.io</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #181818;
+            color: white;
+            padding: 1rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .header nav a:hover {
+            color: #009688;
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 1rem;
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .profile-header p {
+            margin: 0;
+            color: #999;
+        }
+
+        .followers-list, .following-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .follower-item, .following-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: #282828;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .follower-item:hover, .following-item:hover {
+            background-color: #333;
+        }
+
+        .follower-item img, .following-item img {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+        }
+
+        .follower-item .follow-info, .following-item .follow-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .follower-item .follow-info h3, .following-item .follow-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #f4f4f4;
+        }
+
+        .follower-item .follow-info p, .following-item .follow-info p {
+            margin: 0;
+            color: #999;
+        }
+
+        .follow-button {
+            margin-left: auto;
+            background-color: #009688;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .follow-button:hover {
+            background-color: #007d6a;
+        }
+    </style>
 </head>
 <body>
 <header class="header">
@@ -14,14 +137,24 @@
 </header>
 
 <div class="content">
-    <h2>Followers</h2>
-    <div th:each="follower : ${followers}">
-        <p th:text="${follower.follower.loginId}"></p>
-    </div>
-</div>
+<!--    <div class="profile-header">-->
+<!--        <img th:src="${user.profileImage}" alt="Profile Image">-->
+<!--        <div>-->
+<!--            <h2 th:text="${user.name}"></h2>-->
+<!--            <p th:text="'팔로워 ' + ${followersCount} + '명'">Followers Count</p>-->
+<!--        </div>-->
+<!--    </div>-->
 
-<footer class="footer">
-    <p>&copy; 2024 Velog.io</p>
-</footer>
+    <ul class="followers-list">
+        <li th:each="follower : ${followers}" class="follower-item">
+            <img th:src="@{/images/userIcon.png}" alt="Follower Image">
+            <div class="follow-info">
+                <h3 th:text="${follower.follower.name}">Follower Name</h3>
+                <p th:text="'@' + ${follower.follower.loginId}">Follower Login ID</p>
+            </div>
+            <button class="follow-button">팔로잉</button>
+        </li>
+    </ul>
+</div>
 </body>
 </html>
